@@ -9,6 +9,10 @@
 #import "MasterViewController.h"
 
 #import "DetailViewController.h"
+#import "STTwitterAPIWrapper.h"
+#import "STTwitterHTML.h"
+#import "StoryItem.h"
+#import "PageItem.h"
 
 @interface MasterViewController () {
     NSMutableArray *_objects;
@@ -16,6 +20,64 @@
 @end
 
 @implementation MasterViewController
+
+@synthesize stories;
+
+- (void)createPageFromTweet:(NSDictionary *) tweet forStory:(StoryItem *) story
+{
+    NSDictionary *entities = [tweet objectForKey:@"entities"];
+    NSDictionary *media = ((NSArray *)[entities objectForKey:@"media"])[0];
+    NSString *imageUrl = [media objectForKey:@"url"];
+    
+    PageItem *page = [[PageItem alloc] init];
+    page.text = [tweet objectForKey:@"text"];
+    page.imageUrl = imageUrl;
+    
+    [story.pages addObject:page];
+}
+
+- (void)parseTweets:(NSArray *)tweets
+{
+    for (NSDictionary *tweet in tweets) {
+        NSDictionary *entities = [tweet objectForKey:@"entities"];
+        NSArray *hashtags = [entities objectForKey:@"hashtags"];
+        
+        for (NSDictionary *hashtag in hashtags) {
+            //NSLog(@"%@", hashtag);
+            NSString *storyTitle = [hashtag objectForKey:@"text"];
+            if (![storyTitle isEqualToString:@"theneverendingtweets"]) {
+                StoryItem *story = nil;
+                for (StoryItem *item in stories) {
+                    if ([item.title isEqualToString:storyTitle]) {
+                        story = item;
+                        break;
+                    }
+                }
+                
+                if (story) {
+                    // existing story
+                } else {
+                    // new story
+                    story = [[StoryItem alloc] init];
+                    story.pages = [[NSMutableArray alloc] init];
+                    story.title = storyTitle;
+                    
+                    [stories addObject:story];
+                }
+                
+                [self createPageFromTweet:tweet forStory:story];
+            }
+        }
+    }
+}
+
+- (void)populateTable
+{
+    for (int i = 0; i < stories.count; i++) {
+        NSIndexPath *indexPath = [NSIndexPath indexPathForRow:i inSection:0];
+        [self.tableView insertRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
+    }
+}
 
 - (void)awakeFromNib
 {
@@ -27,12 +89,33 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    
+    self.stories = [[NSMutableArray alloc] init];
+    
 	// Do any additional setup after loading the view, typically from a nib.
     self.navigationItem.leftBarButtonItem = self.editButtonItem;
 
     UIBarButtonItem *addButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemAdd target:self action:@selector(insertNewObject:)];
     self.navigationItem.rightBarButtonItem = addButton;
     self.detailViewController = (DetailViewController *)[[self.splitViewController.viewControllers lastObject] topViewController];
+    
+    // here, we use the credentials from OS X Preferences
+    STTwitterAPIWrapper *twitter = [STTwitterAPIWrapper twitterAPIApplicationOnlyWithConsumerKey:@"FEL4uGHIxnxgpKSxIDxLg" consumerSecret:@"xtlSi60jE4MTnucuDBAWl39mbaAOzLFUfp0XAOyE"];
+    [twitter verifyCredentialsWithSuccessBlock:^(NSString *bearerToken) {
+        //NSLog(@"-- bearer: %@", bearerToken);
+        
+        [twitter getSearchTweetsWithQuery:@"#theneverendingtweets" successBlock:^(NSDictionary *searchMetadata, NSArray *statuses) {
+            //NSLog(@"%@", statuses);
+            
+            [self parseTweets:statuses];
+            [self populateTable];
+        } errorBlock:^(NSError *error) {
+            NSLog(@"%@", error);
+        }];
+    } errorBlock:^(NSError *error) {
+        NSLog(@"-- error: %@", error);
+    }];
+    
 }
 
 - (void)didReceiveMemoryWarning
@@ -60,28 +143,29 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return _objects.count;
+    return stories.count;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"Cell" forIndexPath:indexPath];
 
-    NSDate *object = _objects[indexPath.row];
-    cell.textLabel.text = [object description];
+    //NSDate *object = _objects[indexPath.row];
+    StoryItem *object = stories[indexPath.row];
+    cell.textLabel.text = object.title;
     return cell;
 }
 
 - (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
 {
     // Return NO if you do not want the specified item to be editable.
-    return YES;
+    return NO;
 }
 
 - (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
 {
     if (editingStyle == UITableViewCellEditingStyleDelete) {
-        [_objects removeObjectAtIndex:indexPath.row];
+        [stories removeObjectAtIndex:indexPath.row];
         [tableView deleteRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationFade];
     } else if (editingStyle == UITableViewCellEditingStyleInsert) {
         // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view.
@@ -106,7 +190,8 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    NSDate *object = _objects[indexPath.row];
+    //NSDate *object = _objects[indexPath.row];
+    StoryItem *object = stories[indexPath.row];
     self.detailViewController.detailItem = object;
 }
 
