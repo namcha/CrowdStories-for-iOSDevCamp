@@ -28,9 +28,4 @@
     // Configure the view for the selected state
 }
 
-- (void)setStory:(StoryItem *)story
-{
-    titleLabel.text = story.title;
-}
-
 @end

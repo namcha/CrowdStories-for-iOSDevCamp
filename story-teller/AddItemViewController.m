@@ -47,6 +47,15 @@
     [self presentViewController:picker animated:YES completion:nil];
 }
 
+- (IBAction)photoHolderTouchUpInside:(id)sender {
+    UIImagePickerController * picker = [[UIImagePickerController alloc] init];
+	picker.delegate = self;
+    picker.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
+    
+    self.popover = [[UIPopoverController alloc] initWithContentViewController:picker];
+    [self.popover presentPopoverFromRect:CGRectMake(0.0, 0.0, 400.0, 400.0) inView:self.view permittedArrowDirections:UIPopoverArrowDirectionAny animated:YES];
+}
+
 - (IBAction)photoTouchUpInside:(id)sender {
     UIImagePickerController * picker = [[UIImagePickerController alloc] init];
 	picker.delegate = self;
@@ -94,6 +103,9 @@
         //UIImageWriteToSavedPhotosAlbum (imageToSave, nil, nil , nil);
         self.imageView.image = originalImage;
     }
+    
+    self.photoHolderButton.hidden = YES;
+    self.photoButton.hidden = NO;
     
     if (self.popover) {
         [self.popover dismissPopoverAnimated:YES];

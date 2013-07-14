@@ -61,11 +61,6 @@
     }];
 }
 
-- (void)createStory:(StoryItem *)story success:(void (^)(StoryItem *))success error:(void (^)(NSError *))error
-{
-    
-}
-
 - (void)createPageToStory:(Story *)story content:(NSString *)content image:(NSString *)image success:(void (^)(Page *))success error:(void (^)(NSError *error))errorBlock
 {
     NSManagedObjectContext *context = [self.coreDataStore contextForCurrentThread];

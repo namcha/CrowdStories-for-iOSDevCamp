@@ -7,8 +7,8 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "StoryItem.h"
-#import "PageItem.h"
+#import "Story.h"
+#import "Page.h"
 
 @interface StackMobProvider : NSObject
 
@@ -16,7 +16,6 @@
 - (void)reload;
 
 - (void)getStoriesSuccess:(void (^)(NSArray *stories))success error:(void (^)(NSError *error))error;
-- (void)createStory:(StoryItem *)story success:(void (^)(StoryItem *newStory))success error:(void (^)(NSError *error))error;
 - (void)createPageToStory:(Story *)story content:(NSString *)content image:(NSString *)image success:(void (^)(Page *newStory))success error:(void (^)(NSError *error))error;
 
 @property (readonly, strong, nonatomic) NSManagedObjectModel *managedObjectModel;

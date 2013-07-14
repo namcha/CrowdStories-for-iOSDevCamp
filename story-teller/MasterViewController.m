@@ -10,8 +10,6 @@
 
 #import "DetailViewController.h"
 #import "StackMobProvider.h"
-#import "StoryItem.h"
-#import "PageItem.h"
 #import "Story.h"
 #import "Page.h"
 
@@ -25,85 +23,15 @@
 @synthesize stories;
 @synthesize  addViewController;
 
-- (NSDate *) parseTwitterDate:(NSString *)twitterDate {
-    // FIXME this code does not work :(
-    twitterDate = [twitterDate uppercaseString];
-    NSDateFormatter *twitterDateFormatter = NSDateFormatter.new;
-    [twitterDateFormatter setDateFormat: @"EEE MMM dd HH:mm:ss zzz yyyy"];
-    return [twitterDateFormatter dateFromString:twitterDate];
-};
-
-- (void)createPageFromTweet:(NSDictionary *) tweet forStory:(StoryItem *) story
-{
-    NSDictionary *entities = [tweet objectForKey:@"entities"];
-    NSDictionary *media = ((NSArray *)[entities objectForKey:@"media"])[0];
-    NSString *imageUrl = [media objectForKey:@"media_url"];
-    NSString *content = [tweet objectForKey:@"text"];
-    
-    // FIXME need to remove all hashtags and urls
-    NSRegularExpression* regex = [NSRegularExpression regularExpressionWithPattern: @"#.+? |http.+$" options: NSRegularExpressionCaseInsensitive error: nil];
-    NSString* plainText = [regex stringByReplacingMatchesInString: content options: 0 range: NSMakeRange(0, [content length]) withTemplate: @""];
-    NSString *hashTitle = [[NSString alloc] initWithFormat:@"#%@", story.title];
-    plainText = [plainText stringByReplacingOccurrencesOfString:hashTitle withString:@""];
-
-    NSDate *createAt = [self parseTwitterDate:[tweet objectForKey:@"created_at"]];
-    
-    PageItem *page = [[PageItem alloc] init];
-    page.text = plainText;
-    page.imageUrl = imageUrl;
-    page.createAt = createAt;
-    
-    // HACK we assume the order is always start from the newest
-    //[story.pages addObject:page];
-    [story.pages insertObject:page atIndex:0];
-}
-
-- (void)parseTweets:(NSArray *)tweets
-{
-    for (NSDictionary *tweet in tweets) {
-        NSDictionary *entities = [tweet objectForKey:@"entities"];
-        NSArray *hashtags = [entities objectForKey:@"hashtags"];
-        
-        for (NSDictionary *hashtag in hashtags) {
-            //NSLog(@"%@", hashtag);
-            NSString *storyTitle = [hashtag objectForKey:@"text"];
-            storyTitle = [storyTitle stringByReplacingOccurrencesOfString:@"_" withString:@" "];
-            if (![storyTitle isEqualToString:@"theneverendingtweets"]) {
-//            if (![storyTitle isEqualToString:@"iosdevcamp2013"]) {
-                StoryItem *story = nil;
-                for (StoryItem *item in stories) {
-                    if ([item.title isEqualToString:storyTitle]) {
-                        story = item;
-                        break;
-                    }
-                }
-                
-                if (story) {
-                    // existing story
-                } else {
-                    // new story
-                    story = [[StoryItem alloc] init];
-                    story.pages = [[NSMutableArray alloc] init];
-                    story.title = storyTitle;
-                    
-//                    [stories addObject:story];
-//                    [stories insertObject:story atIndex:0];
-                    NSIndexPath *indexPath = [NSIndexPath indexPathForRow:0 inSection:0];
-                    [self.tableView insertRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
-                }
-                
-                [self createPageFromTweet:tweet forStory:story];
-            }
-        }
-    }
-}
-
 - (void)populateTable
 {
+    NSMutableArray *paths = [[NSMutableArray alloc] init];
     for (int i = 0; i < stories.count; i++) {
         NSIndexPath *indexPath = [NSIndexPath indexPathForRow:i inSection:0];
-        [self.tableView insertRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
+        [paths addObject:indexPath];
     }
+    
+    [self.tableView insertRowsAtIndexPaths:paths withRowAnimation:UITableViewRowAnimationAutomatic];
 }
 
 - (void)awakeFromNib
@@ -140,11 +68,6 @@
     }];
     
     self.detailViewController.provider = provider;
-}
-
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
-{
-    NSLog(@"%@", segue.identifier);
 }
 
 - (void)didReceiveMemoryWarning

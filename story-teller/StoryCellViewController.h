@@ -7,11 +7,9 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "StoryItem.h"
+#import "Story.h"
 
 @interface StoryCellViewController : UITableViewCell
-
-- (void)setStory:(StoryItem *)story;
 
 @property (weak, nonatomic) IBOutlet UILabel *titleLabel;
 

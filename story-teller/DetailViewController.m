@@ -16,6 +16,8 @@
 @property (strong, nonatomic) UIPopoverController *masterPopoverController;
 @property (strong, nonatomic) PageDataSource *dataSource;
 
+@property (strong, nonatomic) PageViewController *lastView;
+
 - (void)configureView;
 @end
 
@@ -56,27 +58,34 @@
     }
     
     PageViewController *startingViewController = [dataSource viewControllerAtIndex:0 storyboard:self.storyboard];
-    NSArray *viewControllers = @[startingViewController];
-    [self.pageViewController setViewControllers:viewControllers direction:UIPageViewControllerNavigationDirectionForward animated:NO completion:NULL];
     
-    self.pageViewController.dataSource = self.dataSource;
-    
-    [self addChildViewController:self.pageViewController];
-    [self.view addSubview:self.pageViewController.view];
-    
-    // Set the page view controller's bounds using an inset rect so that self's view is visible around the edges of the pages.
-    CGRect pageViewRect = self.view.bounds;
-    pageViewRect = CGRectInset(pageViewRect, 40.0, 40.0);
-    self.pageViewController.view.frame = pageViewRect;
-    
-    [self.pageViewController didMoveToParentViewController:self];
-    
-    // Add the page view controller's gesture recognizers to the book view controller's view so that the gestures are started more easily.
-    self.view.gestureRecognizers = self.pageViewController.gestureRecognizers;
+    if (self.lastView) {
+        [self.lastView.view removeFromSuperview];
+        [self.lastView removeFromParentViewController];
+        self.lastView = nil;
+    }
 
-//    if (self.detailItem) {
-//        self.detailDescriptionLabel.text = [self.detailItem description];
-//    }
+    if (startingViewController) {
+        NSArray *viewControllers = [[NSArray alloc] initWithObjects:startingViewController, nil];
+        [self.pageViewController setViewControllers:viewControllers direction:UIPageViewControllerNavigationDirectionForward animated:NO completion:NULL];
+        
+        self.pageViewController.dataSource = self.dataSource;
+        
+        [self addChildViewController:self.pageViewController];
+        [self.view addSubview:self.pageViewController.view];
+        
+        // Set the page view controller's bounds using an inset rect so that self's view is visible around the edges of the pages.
+        CGRect pageViewRect = self.view.bounds;
+        pageViewRect = CGRectInset(pageViewRect, 40.0, 40.0);
+        self.pageViewController.view.frame = pageViewRect;
+        
+        [self.pageViewController didMoveToParentViewController:self];
+        
+        // Add the page view controller's gesture recognizers to the book view controller's view so that the gestures are started more easily.
+        self.view.gestureRecognizers = self.pageViewController.gestureRecognizers;
+        
+        self.lastView = startingViewController;
+    }
 }
 
 - (void)viewDidLoad
