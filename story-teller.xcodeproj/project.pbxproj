@@ -29,6 +29,7 @@
 		8C81FB971791F78600B1CDCA /* StoryItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 8C81FB961791F78600B1CDCA /* StoryItem.m */; };
 		8C81FB9A1791F99700B1CDCA /* PageItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 8C81FB991791F99700B1CDCA /* PageItem.m */; };
 		8C81FBA21792098400B1CDCA /* StoryCellViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8C81FBA11792098400B1CDCA /* StoryCellViewController.m */; };
+		8C81FBDD17921D1900B1CDCA /* PageViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8C81FBDC17921D1900B1CDCA /* PageViewController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -71,6 +72,8 @@
 		8C81FB991791F99700B1CDCA /* PageItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PageItem.m; sourceTree = "<group>"; };
 		8C81FBA01792098400B1CDCA /* StoryCellViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StoryCellViewController.h; sourceTree = "<group>"; };
 		8C81FBA11792098400B1CDCA /* StoryCellViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = StoryCellViewController.m; sourceTree = "<group>"; };
+		8C81FBDB17921D1900B1CDCA /* PageViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PageViewController.h; sourceTree = "<group>"; };
+		8C81FBDC17921D1900B1CDCA /* PageViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PageViewController.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -192,6 +195,8 @@ STTwitter */,
 			children = (
 				8C81FBA01792098400B1CDCA /* StoryCellViewController.h */,
 				8C81FBA11792098400B1CDCA /* StoryCellViewController.m */,
+				8C81FBDB17921D1900B1CDCA /* PageViewController.h */,
+				8C81FBDC17921D1900B1CDCA /* PageViewController.m */,
 			);
 			name = ViewControllers;
 			sourceTree = "<group>";
@@ -276,6 +281,7 @@ STTwitter */,
 				8C81FB971791F78600B1CDCA /* StoryItem.m in Sources */,
 				8C81FB9A1791F99700B1CDCA /* PageItem.m in Sources */,
 				8C81FBA21792098400B1CDCA /* StoryCellViewController.m in Sources */,
+				8C81FBDD17921D1900B1CDCA /* PageViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

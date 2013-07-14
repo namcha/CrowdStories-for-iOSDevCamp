@@ -7,10 +7,14 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "StoryItem.h"
 
-@interface DetailViewController : UIViewController <UISplitViewControllerDelegate>
+@interface DetailViewController : UIViewController <UISplitViewControllerDelegate, UIPageViewControllerDelegate>
 
-@property (strong, nonatomic) id detailItem;
+@property (strong, nonatomic) StoryItem *detailItem;
 
 @property (weak, nonatomic) IBOutlet UILabel *detailDescriptionLabel;
+
+@property (strong, nonatomic) UIPageViewController *pageViewController;
+
 @end

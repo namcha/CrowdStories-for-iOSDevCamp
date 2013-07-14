@@ -7,10 +7,14 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "PageViewController.h"
 
-@interface StoryItem : NSObject
+@interface StoryItem : NSObject <UIPageViewControllerDataSource>
 
 @property (nonatomic, retain) NSString *title;
 @property (nonatomic, retain) NSMutableArray *pages;
+
+- (PageViewController *)viewControllerAtIndex:(NSUInteger)index storyboard:(UIStoryboard *)storyboard;
+- (NSUInteger)indexOfViewController:(PageViewController *)viewController;
 
 @end
