@@ -24,6 +24,7 @@
 		8C5EFCD017931B0F0024421F /* redButton.png in Resources */ = {isa = PBXBuildFile; fileRef = 8C5EFCCA17931B0F0024421F /* redButton.png */; };
 		8C5EFCD217931B0F0024421F /* textHolder.png in Resources */ = {isa = PBXBuildFile; fileRef = 8C5EFCCC17931B0F0024421F /* textHolder.png */; };
 		8C5EFCD417931C9D0024421F /* camera256.png in Resources */ = {isa = PBXBuildFile; fileRef = 8C5EFCD317931C9D0024421F /* camera256.png */; };
+		8C5EFCD8179326A40024421F /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 8C5EFCD7179326A40024421F /* README.md */; };
 		8C81FBA21792098400B1CDCA /* StoryCellViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8C81FBA11792098400B1CDCA /* StoryCellViewController.m */; };
 		8C81FBDD17921D1900B1CDCA /* PageViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8C81FBDC17921D1900B1CDCA /* PageViewController.m */; };
 		8C81FBE01792427400B1CDCA /* AddItemViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8C81FBDF1792427400B1CDCA /* AddItemViewController.m */; };
@@ -65,6 +66,7 @@
 		8C5EFCCA17931B0F0024421F /* redButton.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = redButton.png; sourceTree = "<group>"; };
 		8C5EFCCC17931B0F0024421F /* textHolder.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = textHolder.png; sourceTree = "<group>"; };
 		8C5EFCD317931C9D0024421F /* camera256.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = camera256.png; sourceTree = "<group>"; };
+		8C5EFCD7179326A40024421F /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.md; sourceTree = "<group>"; };
 		8C81FBA01792098400B1CDCA /* StoryCellViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StoryCellViewController.h; sourceTree = "<group>"; };
 		8C81FBA11792098400B1CDCA /* StoryCellViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = StoryCellViewController.m; sourceTree = "<group>"; };
 		8C81FBDB17921D1900B1CDCA /* PageViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PageViewController.h; sourceTree = "<group>"; };
@@ -223,6 +225,7 @@
 		8C1FFFFE1791EC6900567D4E = {
 			isa = PBXGroup;
 			children = (
+				8C5EFCD7179326A40024421F /* README.md */,
 				8C894E03179299FA00A16A63 /* NSBase64 */,
 				8C894DA61792816200A16A63 /* StackMob */,
 				8C1F00131791EC6900567D4E /* story-teller */,
@@ -413,6 +416,7 @@
 				8C5EFCD017931B0F0024421F /* redButton.png in Resources */,
 				8C5EFCD217931B0F0024421F /* textHolder.png in Resources */,
 				8C5EFCD417931C9D0024421F /* camera256.png in Resources */,
+				8C5EFCD8179326A40024421F /* README.md in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
