@@ -7,6 +7,7 @@
 //
 
 #import "PageViewController.h"
+#import "NSData+Base64.h"
 
 @interface PageViewController ()
 
@@ -14,7 +15,6 @@
 
 @implementation PageViewController
 
-@synthesize page;
 @synthesize contentImageView, contentLabel;
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
@@ -31,11 +31,11 @@
     [super viewDidLoad];
     
 	// Do any additional setup after loading the view.
-    if (page) {
-        contentLabel.text = page.text;
+    if (self.page) {
+        contentLabel.text = self.page.content;
         
-        NSURL *url = [NSURL URLWithString:page.imageUrl];
-        UIImage *chart = [UIImage imageWithData:[NSData dataWithContentsOfURL:url]];
+        NSData *data = [NSData dataFromBase64String:self.page.image];
+        UIImage *chart = [UIImage imageWithData:data];
         contentImageView.image = chart;
     }
 }

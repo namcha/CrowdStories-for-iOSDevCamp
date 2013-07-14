@@ -7,14 +7,16 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "StoryItem.h"
+#import "StackMobProvider.h"
 
 @interface DetailViewController : UIViewController <UISplitViewControllerDelegate, UIPageViewControllerDelegate>
 
-@property (strong, nonatomic) StoryItem *detailItem;
+@property (strong, nonatomic) Story *detailItem;
 
 @property (weak, nonatomic) IBOutlet UILabel *detailDescriptionLabel;
 
 @property (strong, nonatomic) UIPageViewController *pageViewController;
+
+@property (nonatomic, retain) StackMobProvider *provider;
 
 @end

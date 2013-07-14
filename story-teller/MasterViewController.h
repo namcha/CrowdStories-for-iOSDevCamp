@@ -7,13 +7,15 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "AddItemViewController.h"
 
 @class DetailViewController;
 
 @interface MasterViewController : UITableViewController
 
 @property (strong, nonatomic) DetailViewController *detailViewController;
+@property (nonatomic, retain) AddItemViewController *addViewController;
 
-@property (nonatomic, retain) NSMutableArray *stories;
+@property (nonatomic, retain) NSArray *stories;
 
 @end

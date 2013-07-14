@@ -8,26 +8,32 @@
 
 #import "DetailViewController.h"
 #import "PageViewController.h"
+#import "AddItemViewController.h"
+#import "PageDataSource.h"
 
 @interface DetailViewController ()
+
 @property (strong, nonatomic) UIPopoverController *masterPopoverController;
+@property (strong, nonatomic) PageDataSource *dataSource;
+
 - (void)configureView;
 @end
 
 @implementation DetailViewController
 
-@synthesize detailItem;
+@synthesize dataSource;
 
 #pragma mark - Managing the detail item
 
 - (void)setDetailItem:(id)newDetailItem
 {
-    if (detailItem != newDetailItem) {
-        if (detailItem) {
+    if (self.detailItem != newDetailItem) {
+        if (self.detailItem) {
             [self.pageViewController removeFromParentViewController];
         }
         
-        detailItem = newDetailItem;
+        _detailItem = newDetailItem;
+        self.dataSource.story = newDetailItem;
         
         // Update the view.
         [self configureView];
@@ -38,18 +44,22 @@
     }
 }
 
+- (IBAction)add:(id)sender {
+    
+}
+
 - (void)configureView
 {
     // Update the user interface for the detail item.
-    if (!detailItem) {
+    if (!self.detailItem) {
         return;
     }
     
-    PageViewController *startingViewController = [self.detailItem viewControllerAtIndex:0 storyboard:self.storyboard];
+    PageViewController *startingViewController = [dataSource viewControllerAtIndex:0 storyboard:self.storyboard];
     NSArray *viewControllers = @[startingViewController];
     [self.pageViewController setViewControllers:viewControllers direction:UIPageViewControllerNavigationDirectionForward animated:NO completion:NULL];
     
-    self.pageViewController.dataSource = self.detailItem;
+    self.pageViewController.dataSource = self.dataSource;
     
     [self addChildViewController:self.pageViewController];
     [self.view addSubview:self.pageViewController.view];
@@ -74,11 +84,21 @@
     [super viewDidLoad];
 	// Do any additional setup after loading the view, typically from a nib.
     //[self configureView];
+    self.dataSource = [[PageDataSource alloc] init];
     
 	// Do any additional setup after loading the view, typically from a nib.
     // Configure the page view controller and add it as a child view controller.
     self.pageViewController = [[UIPageViewController alloc] initWithTransitionStyle:UIPageViewControllerTransitionStylePageCurl navigationOrientation:UIPageViewControllerNavigationOrientationHorizontal options:nil];
     self.pageViewController.delegate = self;
+}
+
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
+{
+    if ([segue.identifier isEqualToString:@"addContent"]) {
+        AddItemViewController *vc = segue.destinationViewController;
+        vc.provider = self.provider;
+        vc.story = self.dataSource.story;
+    }
 }
 
 - (void)didReceiveMemoryWarning

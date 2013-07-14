@@ -7,11 +7,11 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "PageItem.h"
+#import "Page.h"
 
 @interface PageViewController : UIViewController
 
-@property (retain, nonatomic) PageItem *page;
+@property (retain, nonatomic) Page *page;
 @property (weak, nonatomic) IBOutlet UIImageView *contentImageView;
 @property (weak, nonatomic) IBOutlet UILabel *contentLabel;
 

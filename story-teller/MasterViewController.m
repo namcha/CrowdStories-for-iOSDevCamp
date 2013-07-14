@@ -9,10 +9,11 @@
 #import "MasterViewController.h"
 
 #import "DetailViewController.h"
-#import "STTwitterAPIWrapper.h"
-#import "STTwitterHTML.h"
+#import "StackMobProvider.h"
 #import "StoryItem.h"
 #import "PageItem.h"
+#import "Story.h"
+#import "Page.h"
 
 @interface MasterViewController () {
     NSMutableArray *_objects;
@@ -22,11 +23,13 @@
 @implementation MasterViewController
 
 @synthesize stories;
+@synthesize  addViewController;
 
 - (NSDate *) parseTwitterDate:(NSString *)twitterDate {
+    // FIXME this code does not work :(
     twitterDate = [twitterDate uppercaseString];
     NSDateFormatter *twitterDateFormatter = NSDateFormatter.new;
-    [twitterDateFormatter setDateFormat: @"ddd MMM dd HH:mm:ss zzz yyyy"];
+    [twitterDateFormatter setDateFormat: @"EEE MMM dd HH:mm:ss zzz yyyy"];
     return [twitterDateFormatter dateFromString:twitterDate];
 };
 
@@ -42,14 +45,13 @@
     NSString* plainText = [regex stringByReplacingMatchesInString: content options: 0 range: NSMakeRange(0, [content length]) withTemplate: @""];
     NSString *hashTitle = [[NSString alloc] initWithFormat:@"#%@", story.title];
     plainText = [plainText stringByReplacingOccurrencesOfString:hashTitle withString:@""];
-    plainText = [plainText stringByReplacingOccurrencesOfString:@"_" withString:@" "];
 
-    //NSDate *createAt = [self parseTwitterDate:[tweet objectForKey:@"created_at"]];
+    NSDate *createAt = [self parseTwitterDate:[tweet objectForKey:@"created_at"]];
     
     PageItem *page = [[PageItem alloc] init];
     page.text = plainText;
     page.imageUrl = imageUrl;
-    //page.createAt = createAt;
+    page.createAt = createAt;
     
     // HACK we assume the order is always start from the newest
     //[story.pages addObject:page];
@@ -65,6 +67,7 @@
         for (NSDictionary *hashtag in hashtags) {
             //NSLog(@"%@", hashtag);
             NSString *storyTitle = [hashtag objectForKey:@"text"];
+            storyTitle = [storyTitle stringByReplacingOccurrencesOfString:@"_" withString:@" "];
             if (![storyTitle isEqualToString:@"theneverendingtweets"]) {
 //            if (![storyTitle isEqualToString:@"iosdevcamp2013"]) {
                 StoryItem *story = nil;
@@ -84,7 +87,7 @@
                     story.title = storyTitle;
                     
 //                    [stories addObject:story];
-                    [stories insertObject:story atIndex:0];
+//                    [stories insertObject:story atIndex:0];
                     NSIndexPath *indexPath = [NSIndexPath indexPathForRow:0 inSection:0];
                     [self.tableView insertRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
                 }
@@ -97,10 +100,10 @@
 
 - (void)populateTable
 {
-//    for (int i = 0; i < stories.count; i++) {
-//        NSIndexPath *indexPath = [NSIndexPath indexPathForRow:i inSection:0];
-//        [self.tableView insertRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
-//    }
+    for (int i = 0; i < stories.count; i++) {
+        NSIndexPath *indexPath = [NSIndexPath indexPathForRow:i inSection:0];
+        [self.tableView insertRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
+    }
 }
 
 - (void)awakeFromNib
@@ -115,7 +118,7 @@
     [super viewDidLoad];
     
     self.stories = [[NSMutableArray alloc] init];
-    
+
 	// Do any additional setup after loading the view, typically from a nib.
     //self.navigationItem.leftBarButtonItem = self.editButtonItem;
 
@@ -123,23 +126,25 @@
     //self.navigationItem.rightBarButtonItem = addButton;
     self.detailViewController = (DetailViewController *)[[self.splitViewController.viewControllers lastObject] topViewController];
     
+    //self.addViewController = [self.storyboard instantiateViewControllerWithIdentifier:@"addItemStory"];
+    //[self.detailViewController.view addSubview:self.addViewController.view];
+    
     // here, we use the credentials from OS X Preferences
-    STTwitterAPIWrapper *twitter = [STTwitterAPIWrapper twitterAPIApplicationOnlyWithConsumerKey:@"FEL4uGHIxnxgpKSxIDxLg" consumerSecret:@"xtlSi60jE4MTnucuDBAWl39mbaAOzLFUfp0XAOyE"];
-    [twitter verifyCredentialsWithSuccessBlock:^(NSString *bearerToken) {
-        //NSLog(@"-- bearer: %@", bearerToken);
-        
-        [twitter getSearchTweetsWithQuery:@"#theneverendingtweets" successBlock:^(NSDictionary *searchMetadata, NSArray *statuses) {
-            //NSLog(@"%@", statuses);
-            
-            [self parseTweets:statuses];
-            [self populateTable];
-        } errorBlock:^(NSError *error) {
-            NSLog(@"%@", error);
-        }];
-    } errorBlock:^(NSError *error) {
-        NSLog(@"-- error: %@", error);
+    StackMobProvider *provider = [[StackMobProvider alloc] init];
+    [provider setAccessToken:STACK_MOB_KEY];
+    [provider getStoriesSuccess:^(NSArray *newStories) {
+        self.stories = newStories;
+        [self populateTable];
+    } error:^(NSError *error) {
+        //
     }];
     
+    self.detailViewController.provider = provider;
+}
+
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
+{
+    NSLog(@"%@", segue.identifier);
 }
 
 - (void)didReceiveMemoryWarning
@@ -156,6 +161,10 @@
     [_objects insertObject:[NSDate date] atIndex:0];
     NSIndexPath *indexPath = [NSIndexPath indexPathForRow:0 inSection:0];
     [self.tableView insertRowsAtIndexPaths:@[indexPath] withRowAnimation:UITableViewRowAnimationAutomatic];
+}
+
+- (IBAction)addStory:(id)sender {
+    self.detailViewController.navigationItem.title = @"add new story";
 }
 
 #pragma mark - Table View
@@ -175,7 +184,7 @@
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"Cell" forIndexPath:indexPath];
 
     //NSDate *object = _objects[indexPath.row];
-    StoryItem *object = stories[indexPath.row];
+    Story *object = stories[indexPath.row];
     cell.textLabel.text = object.title;
     return cell;
 }
@@ -186,6 +195,7 @@
     return NO;
 }
 
+/*
 - (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
 {
     if (editingStyle == UITableViewCellEditingStyleDelete) {
@@ -195,6 +205,7 @@
         // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view.
     }
 }
+*/
 
 /*
 // Override to support rearranging the table view.
@@ -215,9 +226,11 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     //NSDate *object = _objects[indexPath.row];
-    StoryItem *object = stories[indexPath.row];
+    Story *object = stories[indexPath.row];
     self.detailViewController.detailItem = object;
     self.detailViewController.navigationItem.title = object.title;
+    
+    self.addViewController.view.hidden = YES;
 }
 
 @end
